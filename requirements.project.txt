@@ -1,0 +1,4 @@
+# Dependencias base en httphttps://github.com/ludensproductions/requirements-common/blob/main/fastapi/requirements.base.0.110.0.txt
+# Este archivo no debe ser modificado, las dependencias de los proyectos va en 'requirements.txt'
+-r https://raw.githubusercontent.com/ludensproductions/requirements-common/main/fastapi/requirements.base.0.110.0.txt
+-r requirements.txt

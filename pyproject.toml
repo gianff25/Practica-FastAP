@@ -1,0 +1,31 @@
+
+# ==== black ====
+[tool.black]
+line-length = 90
+target-version = ['py311']
+force-exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+)/
+'''
+
+# ==== isort ====
+[tool.isort]
+profile = "black"
+line_length = 90
+
+skip = ["venv/"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+  "ignore::DeprecationWarning:httpx.*:",
+  "ignore::DeprecationWarning:apscheduler.*:",
+  "ignore::DeprecationWarning:pydantic.*:",
+  "ignore::DeprecationWarning:fastapi_scheduler.*:",
+  "ignore::DeprecationWarning:sqlalchemy.*:",
+  "ignore::pytest.PytestCollectionWarning",
+]

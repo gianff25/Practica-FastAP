@@ -1,0 +1,59 @@
+version: "3.3"
+
+volumes:
+  logs:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+
+## 'proyectos-network' (nombre de ejemplo) es una network para
+## que este proyecto y otros se puedan comunicar entre si
+## docker network create proyectos-network
+# networks:
+#   loki-network:
+#     external: true
+#   proyectos-network:
+#     external: true
+
+x-fastapi-base: &fastapi-base
+  build: .
+  restart: unless-stopped
+  command: sh docker/fastapi/start.sh
+  env_file:
+    - .env
+  extra_hosts:
+    - "host-gateway:host-gateway"
+  volumes:
+    - .:/app
+    - logs:/app/logs
+  ports:
+    - ${DOCKER_PORT_OUT}:8000
+  logging:
+    options:
+      max-size: "100m"
+  # networks:
+  #   - proyectos-network
+
+x-promtail-base: &promtail-base
+  image: grafana/promtail:2.6.1
+  restart: unless-stopped
+  command: -config.file=/etc/promtail/config.yml -config.expand-env=true
+  env_file:
+    - .env
+  volumes:
+    - ./docker/promtail/config.yml:/etc/promtail/config.yml
+    - logs:/app/logs
+  networks:
+    - loki-network
+
+services:
+  # promtail:
+  #   <<: *promtail-base
+  #   depends_on:
+  #     - fastapi
+
+  fastapi:
+    <<: *fastapi-base
+    ports:
+      - ${DOCKER_PORT_OUT}:8000
